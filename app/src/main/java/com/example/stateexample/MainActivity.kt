@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,22 +29,29 @@ class MainActivity : ComponentActivity() {
 }
 @Composable
 fun MainScreen() {
+    val greetingListState = remember { mutableStateListOf<String>("John", "Amanda") }
+    val textFieldChange = remember { mutableStateOf("")}
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        GreetingList()
+        GreetingList(greetingListState, { greetingListState.add(textFieldChange.value) },
+                    textFieldChange.value,
+            {newInput -> textFieldChange.value = newInput})
     }
 }
 @Composable
-fun GreetingList() {
-    val greetingListState = remember { mutableStateListOf<String>("John", "Amanda") }
-    for(name in greetingListState) {
+fun GreetingList(nameList: List<String>,
+                 buttonClick: () -> Unit,
+                 textFieldChange: String,
+                 onValueUpdate: (newName: String) -> Unit) {
+    for(name in nameList) {
+
         MainScreen(name = name)
     }
-
-    Button(onClick = { greetingListState.add("Michael") }) {
+    TextField(value = textFieldChange, onValueChange = onValueUpdate)
+    Button(onClick = buttonClick) {
         Text("Add new name")
     }
 }
